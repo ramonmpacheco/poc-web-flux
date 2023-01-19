@@ -33,3 +33,52 @@
 > **Flux** represents 0 to N elements, eg:. making a request to the db the is going to return more than 1 element
 > 
 > **Mono** represents 0 to 1 element, eg:. making a request to the db the is going to return 1 element
+
+> SIMPLE FLUX EXAMPLE
+> ~~~java
+> import reactor.core.publisher.Flux;
+> public Flux<String> namesFlux() {
+>    return Flux.fromIterable(List.of("Avocado", "Banana", "Orange"));
+> }
+>~~~
+> The best way to consume from a flux is subscribing
+>~~~java
+>var fluxAndMonoGeneratorService = new FluxAndMonoGeneratorService();
+>fluxAndMonoGeneratorService.namesFlux().subscribe(System.out::println);
+>~~~
+> This command will print one line for each name
+
+> SIMPLE MONO EXAMPLE
+> ~~~java
+> import reactor.core.publisher.Mono;
+> public Mono<String> nameMono() {
+>    return Mono.just("Apple");
+> }
+> 
+> fluxAndMonoGeneratorService.nameMono().subscribe(System.out::println);
+> This command will print the name Apple
+>~~~
+
+> BEHIND THE FLUX SCENES
+> add the function call log() | ```return Flux.fromIterable(List.of("Abacate", "Banana", "Laranja")).log();```
+> ~~~
+> INFO reactor.Flux.Iterable.1 - | onSubscribe([Synchronous Fuseable] FluxIterable.IterableSubscription)
+> INFO reactor.Flux.Iterable.1 - | request(unbounded)
+> INFO reactor.Flux.Iterable.1 - | onNext(Abacate)
+> INFO reactor.Flux.Iterable.1 - | onNext(Banana)
+> INFO reactor.Flux.Iterable.1 - | onNext(Laranja)
+> INFO reactor.Flux.Iterable.1 - | onComplete()
+>~~~
+
+> HOW TO DO A SIMPLE TEST
+>~~~java
+> @Test
+> void namesFlux() {
+>
+>    Flux<String> namesFlux = fluxAndMonoGeneratorService.namesFlux();
+>
+>    StepVerifier.create(namesFlux)
+>     .expectNext("Avocado", "Banana", "Orange")
+>     .verifyComplete();
+> }
+~~~
