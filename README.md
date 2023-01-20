@@ -81,4 +81,41 @@
 >     .expectNext("Avocado", "Banana", "Orange")
 >     .verifyComplete();
 > }
-~~~
+>~~~
+
+> Map Operator
+> it's used to transform the element from one form to another in a reactive stream
+> ~~~
+> public Flux<String> namesFlux_map() {
+>     return Flux.fromIterable(List.of("Avocado", "Banana", "Orange"))
+>         .map(String::toUpperCase);
+> }
+> ~~~
+
+> Reactive streams are immutable
+
+> Filter Operator
+> it's used to filter elements in a reactive streams
+> ~~~
+> public Flux<String> namesFlux_filter() {
+>     return Flux.fromIterable(List.of("Avocado", "Banana", "Orange"))
+>         .map(String::toUpperCase)
+>         .filter(it -> it.length() > 6);
+> }
+> ~~~
+> When we have chained operator we call it pipeline
+
+> Flatmap Operator
+> It transforms one source element to a flux of 1 to n elements
+> ~~~
+> public Flux<String> namesFlux_flatmap() {
+>     return Flux.fromIterable(List.of("Avocado", "Banana"))
+>         .map(String::toUpperCase)
+>         .flatMap(this::splitstream);
+> }
+>
+> public Flux<String> splitstream(String name) {
+>     var charArray = name.split("");
+>     return Flux.fromArray(charArray);
+>}
+> ~~~
