@@ -1,19 +1,21 @@
 # POC-WEB-FLUX
+
 ## Springboot + Webflux
+
 <br />
 
 > Reactive Programing is a new programing paradigm
-> 
+>
 > Asynchronous and non blocking (not blocking the thread)
-> 
+>
 > Data flows as an Event/Message driven stream
 
 > WHEN TO USE REACTIVE PROGRAMMING?
-> 
+>
 > When there is need to build and support high load with the available resources
 
 > Reactive Streams are the foundation for Reactive Programming
-> 
+>
 > It has four interfaces:
 > - Publisher
 > - Subscriber
@@ -25,13 +27,13 @@
 [Project Reactor Reference Guide](https://projectreactor.io/docs/)
 
 > [FLUX](https://projectreactor.io/docs/core/release/reference/#flux) AND [MONO](https://projectreactor.io/docs/core/release/reference/#mono)
-> 
+>
 > They are reactive types that implements the Reactive Streams Specification
-> 
+>
 > They are part of the reactor-core module
-> 
+>
 > **Flux** represents 0 to N elements, eg:. making a request to the db the is going to return more than 1 element
-> 
+>
 > **Mono** represents 0 to 1 element, eg:. making a request to the db the is going to return 1 element
 
 > SIMPLE FLUX EXAMPLE
@@ -119,3 +121,34 @@
 >     return Flux.fromArray(charArray);
 >}
 > ~~~
+
+> ConcatMap Operator
+> It works similar to flatmap, but preserves the ordering sequence of the reactive streams
+
+> Transform operator
+> It's used to transform from one type to another
+
+> DefaultIfEmpty e SwitchIfEmpty
+> It's not mandatory for data source to emit data all the time
+> ```.defaultIfEmpty("Default value");```
+>
+> ``` .switchIfEmpty(Flux.just("default"));```
+
+> Concat And ConcatWith Operators
+> Used to combine two reactive streams into one
+> ~~~
+> Flux<String> flux1 = Flux.just("a", "b", "c");
+> Flux<String> flux2 = Flux.just("d", "e", "f");
+> return Flux.concat(flux1, flux2);
+> ~~~
+
+> Merge and MergeWith
+> similar with concat, but do not in sequence
+
+<hr>
+
+## Spring WebFlux
+
+> [Docs](https://docs.spring.io/spring-framework/docs/5.0.0.M5/spring-framework-reference/html/web-reactive.html)
+> 
+> There are two flavors when it comes to building restful API's in Spring WebFlux: [Annotated Controllers, Functional Endpoints]
