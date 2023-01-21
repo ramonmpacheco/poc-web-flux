@@ -152,3 +152,97 @@
 > [Docs](https://docs.spring.io/spring-framework/docs/5.0.0.M5/spring-framework-reference/html/web-reactive.html)
 > 
 > There are two flavors when it comes to building restful API's in Spring WebFlux: [Annotated Controllers, Functional Endpoints]
+> ~~~java
+> // Annotated Controllers
+> 
+> @RestController
+> public class FluxAndMonoController {
+>     @GetMapping("/flux")
+>     public Flux<Integer> flux() {
+>         return Flux.just(1,2,3);
+>     }
+>
+>    @GetMapping("/mono")
+>    public Mono<String> mono() {
+>        return Mono.just("Hello World");
+>    }
+>
+>}
+> ~~~
+
+> How to Test
+> ~~~java
+> import org.junit.jupiter.api.Assertions;
+> import org.junit.jupiter.api.Test;
+> import org.springframework.beans.factory.annotation.Autowired;
+> import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+> import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+> import org.springframework.test.web.reactive.server.WebTestClient;
+> import reactor.test.StepVerifier;
+>
+> import java.util.Objects;
+>
+> @WebFluxTest(controllers = FluxAndMonoController.class)
+> @AutoConfigureWebTestClient
+> class FluxAndMonoControllerTest {
+> @Autowired
+> WebTestClient webTestClient;
+>
+>    @Test
+>    void flux() {
+>        webTestClient
+>                .get()
+>                .uri("/flux")
+>                .exchange()
+>                .expectStatus()
+>                .is2xxSuccessful()
+>                .expectBodyList(Integer.class)
+>                .hasSize(3);
+>    }
+>
+>    @Test
+>     void flux_aproach_2() {
+>         var result = webTestClient
+>                .get()
+>                .uri("/flux")
+>                .exchange()
+>                .expectStatus()
+>                .is2xxSuccessful()
+>                .returnResult(Integer.class)
+>                .getResponseBody();
+>        StepVerifier.create(result)
+>                .expectNext(1,2,3)
+>                .verifyComplete();
+>    }
+>
+>    @Test
+>    void flux_aproach_3() {
+>        var result = webTestClient
+>                .get()
+>                .uri("/flux")
+>                .exchange()
+>                .expectStatus()
+>                .is2xxSuccessful()
+>                .expectBodyList(Integer.class)
+>                .consumeWith(listEntityExchangeResult -> {
+>                    var responseBody = listEntityExchangeResult.getResponseBody();
+>                    assert Objects.requireNonNull(responseBody).size() == 3;
+>                });
+>    }
+>
+>    @Test
+>    void mono() {
+>        var result = webTestClient
+>                .get()
+>                .uri("/mono")
+>                .exchange()
+>                .expectStatus()
+>                .is2xxSuccessful()
+>                .expectBody(String.class)
+>                .consumeWith(stringEntityExchangeResult -> {
+>                    var responseBody = stringEntityExchangeResult.getResponseBody();
+>                    Assertions.assertEquals("Hello World", responseBody);
+>                });
+>    }
+>}
+> ~~~
